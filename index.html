@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Happy 25th 🎉</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 24px;
+      width: 360px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      animation: cardFade 0.35s ease;
+      transition: opacity 0.25s ease;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-weight: 600;
+    }
+
+    .image-wrapper {
+      position: relative;
+      overflow: hidden;
+      border-radius: 12px;
+      margin: 16px 0;
+    }
+
+    .image-wrapper img {
+      width: 100%;
+      display: block;
+      animation: imageEnter 0.5s ease;
+    }
+
+    .question {
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      background: #00c6ff;
+      color: black;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #00aee6;
+    }
+
+    .progress {
+      margin-top: 12px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .error {
+      color: #ff6b6b;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    .reveal {
+      animation: revealGift 1s ease forwards;
+    }
+
+    .code {
+      font-size: 22px;
+      letter-spacing: 3px;
+      margin-top: 12px;
+      animation: glow 1.5s infinite alternate;
+    }
+
+    @keyframes cardFade {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes imageEnter {
+      from {
+        opacity: 0;
+        transform: scale(1.03) translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    @keyframes revealGift {
+      0% { opacity: 0; transform: scale(0.96); }
+      60% { opacity: 1; transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 5px #00c6ff; }
+      to { text-shadow: 0 0 15px #00c6ff; }
+    }
+  </style>
+    </head>
+    <body>
+
+        <div class="card" id="app"></div>
+
+        <script>
+  const puzzles = [
+    {
+      image: "images/1.jpg",
+      question: "Where was this taken?",
+      answer: "hawaii"
+    },
+    {
+      image: "images/2.png",
+      question: "Who took this photo?",
+      answer: "alex"
+    }
+    // 👉 Add up to 25 total puzzles
+  ];
+
+  // Optional light obfuscation (base64)
+  const STEAM_CODE = atob("WFhYWFgtWFhYWFgtWFhYWFg="); // replace with your encoded code
+
+  let current = 0;
+  const app = document.getElementById("app");
+
+  function renderPuzzle() {
+    const p = puzzles[current];
+    app.innerHTML = `
+      <h1>Happy 25th Birthday 🎂</h1>
+      <div class="image-wrapper">
+        <img src="${p.image}" alt="memory" />
+      </div>
+      <div class="question">${p.question}</div>
+      <input id="answer" placeholder="Your answer..." autocomplete="off" />
+      <button onclick="submitAnswer()">Submit</button>
+      <div class="error" id="error"></div>
+      <div class="progress">Question ${current + 1} / 25</div>
+    `;
+  }
+
+  function submitAnswer() {
+    const input = document.getElementById("answer").value.trim().toLowerCase();
+    if (input === puzzles[current].answer.toLowerCase()) {
+      app.style.opacity = 0;
+      setTimeout(() => {
+        current++;
+        if (current === puzzles.length) {
+          revealGift();
+        } else {
+          app.style.opacity = 1;
+          renderPuzzle();
+        }
+      }, 250);
+    } else {
+      document.getElementById("error").textContent = "❌ Not quite — try again!";
+    }
+  }
+
+  function revealGift() {
+    app.innerHTML = `
+      <div class="reveal">
+        <h1>🎉 You did it!</h1>
+        <p>25 memories. 25 questions.</p>
+        <p>Your gift 🎁</p>
+        <div class="code">${STEAM_CODE}</div>
+        <p style="opacity:0.75;font-size:14px;margin-top:16px;">
+          Steam → Games → Activate a Product
+        </p>
+      </div>
+    `;
+  }
+
+  renderPuzzle();
+</script>
+
+    </body>
+</html>
