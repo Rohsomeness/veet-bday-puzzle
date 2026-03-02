@@ -6,10 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
-    /* --- Global reset & box model fix --- */
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -34,12 +31,8 @@
       transition: opacity 0.25s ease;
     }
 
-    h1 {
-      margin-top: 0;
-      font-weight: 600;
-    }
+    h1 { margin-top: 0; font-weight: 600; }
 
-    /* --- Media (image/video) --- */
     .media-wrapper {
       position: relative;
       overflow: hidden;
@@ -54,28 +47,20 @@
       animation: mediaEnter 0.5s ease;
     }
 
-    video {
-      background: black;
-    }
+    video { background: black; }
 
-    .question {
-      font-size: 16px;
-      margin-bottom: 12px;
-    }
+    .question { font-size: 16px; margin-bottom: 12px; }
 
     input {
       width: 100%;
       padding: 10px;
       border-radius: 8px;
       border: none;
-      outline: none;
       font-size: 16px;
       margin-bottom: 8px;
     }
 
-    input:focus {
-      outline: 2px solid #00c6ff;
-    }
+    input:focus { outline: 2px solid #00c6ff; }
 
     button {
       width: 100%;
@@ -90,9 +75,7 @@
       margin-top: 4px;
     }
 
-    button:hover {
-      background: #00aee6;
-    }
+    button:hover { background: #00aee6; }
 
     .progress {
       margin-top: 12px;
@@ -106,10 +89,7 @@
       margin-top: 6px;
     }
 
-    /* --- Final reveal --- */
-    .reveal {
-      animation: revealGift 1s ease forwards;
-    }
+    .reveal { animation: revealGift 1s ease forwards; }
 
     .code {
       font-size: 22px;
@@ -118,21 +98,14 @@
       animation: glow 1.5s infinite alternate;
     }
 
-    /* --- Animations --- */
     @keyframes cardFade {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     @keyframes mediaEnter {
-      from {
-        opacity: 0;
-        transform: scale(1.03) translateY(6px);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
+      from { opacity: 0; transform: scale(1.03) translateY(6px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
     }
 
     @keyframes revealGift {
@@ -149,158 +122,102 @@
 </head>
 <body>
 
-  <div class="card" id="app"></div>
+<div class="card" id="app"></div>
 
 <script>
-  /* ---------------------------
-     PUZZLES CONFIG
-  ----------------------------*/
-  const puzzles = [
-    {
-      type: "image",
-      src: "images/1.jpg",
-      question: "What year was this taken?",
-      answer: "2016"
-    },
-    {
-      type: "image",
-      src: "images/2.png",
-      question: "What was the greened out message?",
-      answer: "sueghandes nuts"
-    },
-    {
-      type: "video",
-      src: "images/3.mp4",
-      question: "What did you say next?",
-      answer: "administration"
-    },
-    {
-      type: "image",
-      src: "images/4.JPG",
-      question: "What score did you get?",
-      answer: "720"
-    },
-    {
-      type: "image",
-      src: "images/5.PNG",
-      question: "What is the blotted out word?",
-      answer: "crcheated"
-    },
-    {
-      type: "image",
-      src: "images/7.JPG",
-      question: "What is the name of the school where we took this picture?",
-      answer: "Brandywine"
-    },
-    {
-      type: "image",
-      src: "images/8.PNG",
-      question: "How many conversations were we maintaining at once?",
-      answer: "14"
-    },
-    {
-      type: "image",
-      src: "images/9.PNG",
-      question: "Was it Rohit or Vatan?",
-      answer: "Vatan"
-    },
-    {
-      type: "image",
-      src: "images/10.PNG",
-      question: "What was the caption of this post?",
-      answer: "New fetish"
-    },
-    {
-      type: "image",
-      src: "images/11.JPG",
-      question: "What holiday was this photo?",
-      answer: "Halloween"
-    },
-    {
-      type: "image",
-      src: "images/12.JPG",
-      question: "What movie did we watch before this photo?",
-      answer: "Deadpool"
-    },
-  ];
+/* ---------------------------
+   HASH FUNCTION
+----------------------------*/
+async function hash(text) {
+  const msg = new TextEncoder().encode(text.toLowerCase());
+  const buffer = await crypto.subtle.digest("SHA-256", msg);
+  return Array.from(new Uint8Array(buffer))
+    .map(b => b.toString(16).padStart(2, "0"))
+    .join("");
+}
 
-  // Base64-obfuscated Steam code (optional)
-  const STEAM_CODE = atob("WFhYWFgtWFhYWFgtWFhYWFg=");
+/* ---------------------------
+   PUZZLES (HASHED)
+----------------------------*/
+const puzzles = [
+  { type:"image", src:"images/1.jpg", question:"What year was this taken?", answerHash:"da6e2f539726fabd1f8cd7c9469a22b36769137975b28abc65fe2dc29e659b77" },
+  { type:"image", src:"images/2.png", question:"What was the greened out message?", answerHash:"56c36eba0651fb09190658615fbe9f5b1096ca535694a60993338875dd3b07bf" },
+  { type:"video", src:"images/3.mp4", question:"What did you say next?", answerHash:"512afb6c763173d396baa0d08494e5845682df53d11f056110221a6601973e2c" },
+  { type:"image", src:"images/4.JPG", question:"What score did you get?", answerHash:"d829857eb1366e70be857a69886d1555af0d32681beab068afb93492c2e2b843" },
+  { type:"image", src:"images/5.PNG", question:"What is the blotted out word?", answerHash:"689bd40992f9ec8804a6c9982eb96d44c655ba8df291a1986cefc2f47f35a4ea" },
+  { type:"image", src:"images/7.JPG", question:"What is the name of the school where we took this picture?", answerHash:"7cf55690b5965aee011f32bb071a0a1847cfbe7f9580c9c0e08d3e36a6b78e00" },
+  { type:"image", src:"images/8.PNG", question:"How many conversations were we maintaining at once?", answerHash:"8527a891e224136950ff32ca212b45bc93f69fbb801c3b1ebedac52775f99e61" },
+  { type:"image", src:"images/9.PNG", question:"Was it Rohit or Vatan?", answerHash:"c5532dfb1c213ff1875d84f6e81b8b7b3eca3de2d69eee110152ce9fa29f6c24" },
+  { type:"image", src:"images/10.PNG", question:"What was the caption of this post?", answerHash:"b59e74907f37e2e5f25fd733a7cc317203600365b6a2c47301b7f4390daaef02" },
+  { type:"image", src:"images/11.JPG", question:"What holiday was this photo?", answerHash:"9eb7ee7f551d2f0ac684981bd1f1e2fa4a37590199636753efe614d4db30e8e1" },
+  { type:"image", src:"images/12.JPG", question:"What movie did we watch before this photo?", answerHash:"03391382a15ee47c608b6bb39685ab682a8eecc3c451f33c96edbe4f984340a4" },
+  { type:"video", src:"images/13.mp4", question:"What level was this?", answerHash:"40d2947ae2480bf67ca177d626b66e9f263eed83ee250399b373af19139f6293" },
+  { type:"image", src:"images/14.JPG", question:"What number was the jersey?", answerHash:"35135aaa6cc23891b40cb3f378c53a17a1127210ce60e125ccf03efcfdaec458" },
+  { type:"image", src:"images/15.JPG", question:"Where was this?", answerHash:"7e7601d051736f757807031680ae61139fc09295d22f2cae60325d9fb8ef7701" },
+  { type:"image", src:"images/16.JPG", question:"Who took this picture?", answerHash:"c0b1eac6bb604a5648a2b165f824467e3d1b04f8e682a8a75fef7f833a6190f0" },
+  { type:"image", src:"images/17.PNG", question:"Manoj's snap name on my phone was OJ. What was yours?", answerHash:"cdee7be4b1654a539017d60a7f798603687a276a237158f2535b80e603bf1f26" },
+  { type:"video", src:"images/18.mp4", question:"What number odds did you lose to do this?", answerHash:"c75cb66ae28d8ebc6eded002c28a8ba0d06d3a78c6b5cbf9b2ade051f0775ac4" },
+  { type:"image", src:"images/19.jpg", question:"What number was the hour hand closest to in this picture?", answerHash:"d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35" },
+  { type:"video", src:"images/20.mp4", question:"What song were we dancing to?", answerHash:"214f0a1acf905e271ed3ee3db5e4d218891aab98e4c5f4744a4df5fd4b70e389" },
+  { type:"video", src:"images/21.mp4", question:"Who wrote the song we were singing?", answerHash:"c07d72b68377c374949c47406e7d670bff3b23614081aee626edf6bd34d4db5a" },
+  { type:"video", src:"images/22.mp4", question:"What was playing on the speaker? (Hint: It was near christmas time)", answerHash:"1d6c3c52405370fdd76f8f56060ef16149177a4de320ceae73f2726d4ff07265" },
+  { type:"video", src:"images/23.mp4", question:"What month was this video taken?", answerHash:"7a6d85963363d1c23f410a9b01708742d7694efb7fb8b46a277786a0a7e9309d" },
+  { type:"image", src:"images/24.PNG", question:"Wtf did you draw here?", answerHash:"960a38ace75a2fe9426aa5d48b536cc6db18a2023b9bdd698e562fc3023585a6" },
+  { type:"video", src:"images/25.mp4", question:"Did you go out with this girl?", answerHash:"9390298f3fb0c5b160498935d79cb139aef28e1c47358b4bbba61862b9c26e59" }
+];
 
-  let current = 0;
-  const app = document.getElementById("app");
+const STEAM_CODE = atob("IREALIZEDTHISCOULDGETSTOLENSOTEXTME");
 
-  function renderPuzzle() {
-    const p = puzzles[current];
-    let mediaHTML = "";
+let current = 0;
+const app = document.getElementById("app");
 
-    if (p.type === "image") {
-      mediaHTML = `<img src="${p.src}" alt="memory" />`;
-    } else if (p.type === "video") {
-      mediaHTML = `
-        <video src="${p.src}" controls playsinline></video>
-      `;
-    }
+function renderPuzzle() {
+  const p = puzzles[current];
+  const media = p.type === "video"
+    ? `<video src="${p.src}" controls playsinline></video>`
+    : `<img src="${p.src}" />`;
 
-    app.innerHTML = `
-      <h1>Happy 25th Birthday 🎂</h1>
+  app.innerHTML = `
+    <h1>Happy 25th Birthday 🎂</h1>
+    <div class="media-wrapper">${media}</div>
+    <div class="question">${p.question}</div>
+    <input id="answer" placeholder="Your answer..." autocomplete="off" />
+    <button onclick="submitAnswer()">Submit</button>
+    <div class="error" id="error"></div>
+    <div class="progress">Question ${current + 1} / 25</div>
+  `;
+}
 
-      <div class="media-wrapper">
-        ${mediaHTML}
-      </div>
+async function submitAnswer() {
+  const input = document.getElementById("answer").value.trim();
+  const inputHash = await hash(input);
 
-      <div class="question">${p.question}</div>
+  if (inputHash === puzzles[current].answerHash) {
+    const video = document.querySelector("video");
+    if (video) video.pause();
 
-      <input id="answer" placeholder="Your answer..." autocomplete="off" />
-      <button onclick="submitAnswer()">Submit</button>
-
-      <div class="error" id="error"></div>
-      <div class="progress">Question ${current + 1} / 25</div>
-    `;
+    app.style.opacity = 0;
+    setTimeout(() => {
+      current++;
+      current === puzzles.length ? revealGift() : (app.style.opacity = 1, renderPuzzle());
+    }, 250);
+  } else {
+    document.getElementById("error").textContent = "❌ Not quite — try again!";
   }
+}
 
-  function submitAnswer() {
-    const input = document.getElementById("answer").value.trim().toLowerCase();
-    if (input === puzzles[current].answer.toLowerCase()) {
+function revealGift() {
+  app.style.opacity = 1;
+  app.innerHTML = `
+    <div class="reveal">
+      <h1>🎉 You did it!</h1>
+      <p>Your gift 🎁</p>
+      <div class="code">${STEAM_CODE}</div>
+    </div>
+  `;
+}
 
-      // Pause video if present
-      const video = document.querySelector("video");
-      if (video) video.pause();
-
-      app.style.opacity = 0;
-
-      setTimeout(() => {
-        current++;
-        if (current === puzzles.length) {
-          revealGift();
-        } else {
-          app.style.opacity = 1;
-          renderPuzzle();
-        }
-      }, 250);
-
-    } else {
-      document.getElementById("error").textContent = "❌ Not quite — try again!";
-    }
-  }
-
-  function revealGift() {
-    app.style.opacity = 1;
-    app.innerHTML = `
-      <div class="reveal">
-        <h1>🎉 You did it!</h1>
-        <p>25 memories. 25 questions.</p>
-        <p>Your gift 🎁</p>
-        <div class="code">${STEAM_CODE}</div>
-        <p style="opacity:0.75;font-size:14px;margin-top:16px;">
-          Steam → Games → Activate a Product
-        </p>
-      </div>
-    `;
-  }
-
-  renderPuzzle();
+renderPuzzle();
 </script>
-
 </body>
 </html>
