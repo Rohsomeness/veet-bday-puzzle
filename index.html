@@ -188,18 +188,19 @@
   }
 
   function revealGift() {
+    app.style.opacity = 1;
     app.innerHTML = `
-      <div class="reveal">
+        <div class="reveal">
         <h1>🎉 You did it!</h1>
         <p>25 memories. 25 questions.</p>
         <p>Your gift 🎁</p>
         <div class="code">${STEAM_CODE}</div>
         <p style="opacity:0.75;font-size:14px;margin-top:16px;">
-          Steam → Games → Activate a Product
+            Steam → Games → Activate a Product
         </p>
-      </div>
+        </div>
     `;
-  }
+    }
 
   renderPuzzle();
 </script>
