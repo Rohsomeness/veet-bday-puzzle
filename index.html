@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <title>Happy 25th 🎉</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+  <meta charset="UTF-8" />
+  <title>Happy 25th 🎉</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <style>
+  <style>
+    /* --- Global reset & box model fix --- */
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
@@ -34,17 +39,23 @@
       font-weight: 600;
     }
 
-    .image-wrapper {
+    /* --- Media (image/video) --- */
+    .media-wrapper {
       position: relative;
       overflow: hidden;
       border-radius: 12px;
       margin: 16px 0;
     }
 
-    .image-wrapper img {
+    .media-wrapper img,
+    .media-wrapper video {
       width: 100%;
       display: block;
-      animation: imageEnter 0.5s ease;
+      animation: mediaEnter 0.5s ease;
+    }
+
+    video {
+      background: black;
     }
 
     .question {
@@ -59,7 +70,11 @@
       border: none;
       outline: none;
       font-size: 16px;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
+    }
+
+    input:focus {
+      outline: 2px solid #00c6ff;
     }
 
     button {
@@ -72,6 +87,7 @@
       font-weight: 600;
       font-size: 16px;
       cursor: pointer;
+      margin-top: 4px;
     }
 
     button:hover {
@@ -87,9 +103,10 @@
     .error {
       color: #ff6b6b;
       font-size: 14px;
-      margin-top: 8px;
+      margin-top: 6px;
     }
 
+    /* --- Final reveal --- */
     .reveal {
       animation: revealGift 1s ease forwards;
     }
@@ -101,12 +118,13 @@
       animation: glow 1.5s infinite alternate;
     }
 
+    /* --- Animations --- */
     @keyframes cardFade {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    @keyframes imageEnter {
+    @keyframes mediaEnter {
       from {
         opacity: 0;
         transform: scale(1.03) translateY(6px);
@@ -128,42 +146,120 @@
       to { text-shadow: 0 0 15px #00c6ff; }
     }
   </style>
-    </head>
-    <body>
+</head>
+<body>
 
-        <div class="card" id="app"></div>
+  <div class="card" id="app"></div>
 
-        <script>
+<script>
+  /* ---------------------------
+     PUZZLES CONFIG
+  ----------------------------*/
   const puzzles = [
     {
-      image: "images/1.jpg",
-      question: "Where was this taken?",
-      answer: "hawaii"
+      type: "image",
+      src: "images/1.jpg",
+      question: "What year was this taken?",
+      answer: "2016"
     },
     {
-      image: "images/2.png",
-      question: "Who took this photo?",
-      answer: "alex"
-    }
-    // 👉 Add up to 25 total puzzles
+      type: "image",
+      src: "images/2.png",
+      question: "What was the greened out message?",
+      answer: "sueghandes nuts"
+    },
+    {
+      type: "video",
+      src: "images/3.mov",
+      question: "What did you say next?",
+      answer: "administration"
+    },
+    {
+      type: "image",
+      src: "images/4.JPG",
+      question: "What score did you get?",
+      answer: "720"
+    },
+    {
+      type: "image",
+      src: "images/5.PNG",
+      question: "What is the blotted out word?",
+      answer: "crcheated"
+    },
+    {
+      type: "image",
+      src: "images/7.JPG",
+      question: "What is the name of the school where we took this picture?",
+      answer: "Brandywine"
+    },
+    {
+      type: "image",
+      src: "images/8.PNG",
+      question: "How many conversations were we maintaining at once?",
+      answer: "14"
+    },
+    {
+      type: "image",
+      src: "images/9.PNG",
+      question: "Was it Rohit or Vatan?",
+      answer: "Vatan"
+    },
+    {
+      type: "image",
+      src: "images/10.PNG",
+      question: "What was the caption of this post?",
+      answer: "New fetish"
+    },
+    {
+      type: "image",
+      src: "images/11.JPG",
+      question: "What holiday was this photo?",
+      answer: "Halloween"
+    },
+    {
+      type: "image",
+      src: "images/12.JPG",
+      question: "What movie did we watch before this photo?",
+      answer: "Deadpool"
+    },
+    {
+      type: "image",
+      src: "images/13.mp4",
+      question: "What level was this?",
+      answer: "Hexagon force"
+    },
   ];
 
-  // Optional light obfuscation (base64)
-  const STEAM_CODE = atob("WFhYWFgtWFhYWFgtWFhYWFg="); // replace with your encoded code
+  // Base64-obfuscated Steam code (optional)
+  const STEAM_CODE = atob("WFhYWFgtWFhYWFgtWFhYWFg=");
 
   let current = 0;
   const app = document.getElementById("app");
 
   function renderPuzzle() {
     const p = puzzles[current];
+    let mediaHTML = "";
+
+    if (p.type === "image") {
+      mediaHTML = `<img src="${p.src}" alt="memory" />`;
+    } else if (p.type === "video") {
+      mediaHTML = `
+        <video src="${p.src}" controls playsinline></video>
+      `;
+    }
+
     app.innerHTML = `
       <h1>Happy 25th Birthday 🎂</h1>
-      <div class="image-wrapper">
-        <img src="${p.image}" alt="memory" />
+
+      <div class="media-wrapper">
+        ${mediaHTML}
       </div>
+
       <div class="question">${p.question}</div>
+
       <input id="answer" placeholder="Your answer..." autocomplete="off" />
       <button onclick="submitAnswer()">Submit</button>
+
       <div class="error" id="error"></div>
       <div class="progress">Question ${current + 1} / 25</div>
     `;
@@ -172,7 +268,13 @@
   function submitAnswer() {
     const input = document.getElementById("answer").value.trim().toLowerCase();
     if (input === puzzles[current].answer.toLowerCase()) {
+
+      // Pause video if present
+      const video = document.querySelector("video");
+      if (video) video.pause();
+
       app.style.opacity = 0;
+
       setTimeout(() => {
         current++;
         if (current === puzzles.length) {
@@ -182,6 +284,7 @@
           renderPuzzle();
         }
       }, 250);
+
     } else {
       document.getElementById("error").textContent = "❌ Not quite — try again!";
     }
@@ -190,20 +293,20 @@
   function revealGift() {
     app.style.opacity = 1;
     app.innerHTML = `
-        <div class="reveal">
+      <div class="reveal">
         <h1>🎉 You did it!</h1>
         <p>25 memories. 25 questions.</p>
         <p>Your gift 🎁</p>
         <div class="code">${STEAM_CODE}</div>
         <p style="opacity:0.75;font-size:14px;margin-top:16px;">
-            Steam → Games → Activate a Product
+          Steam → Games → Activate a Product
         </p>
-        </div>
+      </div>
     `;
-    }
+  }
 
   renderPuzzle();
 </script>
 
-    </body>
+</body>
 </html>
